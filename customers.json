@@ -1,0 +1,22 @@
+[
+  {
+    "customer_id": "1",
+    "first_name": "Julia",
+    "last_name": "Roberts"
+  },
+  {
+    "customer_id": "2",
+    "first_name": "Brad",
+    "last_name": "Pitt"
+  },
+  {
+    "customer_id": "3",
+    "first_name": "Tom",
+    "last_name": "Cruise"
+  },
+  {
+    "customer_id": "4",
+    "first_name": "Jennifer",
+    "last_name": "Aniston"
+  }
+]

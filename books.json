@@ -1,0 +1,138 @@
+[
+    {
+        "book_id": "1",
+        "title": "1984",
+        "author": "George Orwell",
+        "language": "English",
+        "year": "1949",
+        "genre": "Dystopia"
+    },
+    {
+        "book_id": "2",
+        "title": "1984",
+        "author": "George Orwell",
+        "language": "English",
+        "year": "1949",
+        "genre": "Dystopia"
+    },
+    {
+        "book_id": "3",
+        "title": "It",
+        "author": "Stephen King",
+        "language": "English",
+        "year": "1986",
+        "genre": "Horror"
+    },
+    {
+        "book_id": "4",
+        "title": "It",
+        "author": "Stephen King",
+        "language": "English",
+        "year": "1986",
+        "genre": "Horror"
+    },
+    {
+        "book_id": "5",
+        "title": "It",
+        "author": "Stephen King",
+        "language": "English",
+        "year": "1986",
+        "genre": "Horror"
+    },
+    {
+        "book_id": "6",
+        "title": "Carrie",
+        "author": "Stephen King",
+        "language": "English",
+        "year": "1974",
+        "genre": "Horror"
+    },
+    {
+        "book_id": "7",
+        "title": "Harry Potter",
+        "author": "Joanne Rowling",
+        "language": "English",
+        "year": "1997",
+        "genre": "Fantasy"
+    },
+    {
+        "book_id": "8",
+        "title": "Jane Eyre",
+        "author": "Charlotte Bronte",
+        "language": "English",
+        "year": "1847",
+        "genre": "Drama"
+    },
+    {
+        "book_id": "9",
+        "title": "Fiesta",
+        "author": "Ernest Hermingway",
+        "language": "English",
+        "year": "1926",
+        "genre": "Drama"
+    },
+    {
+        "book_id": "10",
+        "title": "Dumb Witness",
+        "author": "Agatha Christie",
+        "language": "English",
+        "year": "1937",
+        "genre": "Detective"
+    },
+    {
+        "book_id": "11",
+        "title": "Alice in Wonderland",
+        "author": "Lewis Carrol",
+        "language": "English",
+        "year": "1865",
+        "genre": "Children's"
+    },
+    {
+        "book_id": "12",
+        "title": "The Godfather",
+        "author": "Mario Puzo",
+        "language": "Italian",
+        "year": "1969",
+        "genre": "Drama"
+    },
+    {
+        "book_id": "13",
+        "title": "Norwegian Wood",
+        "author": "Haruki Murakami",
+        "language": "Japanese",
+        "year": "1987",
+        "genre": "Drama"
+    },
+    {
+        "book_id": "14",
+        "title": "The Lord of the Rings",
+        "author": "J. R. R. Tolkien",
+        "language": "English",
+        "year": "1954",
+        "genre": "Fantasy"
+    },
+    {
+        "book_id": "15",
+        "title": "The Little Prince",
+        "author": "Antoine de Saint-Exupery",
+        "language": "French",
+        "year": "1943",
+        "genre": "Children's"
+    },
+    {
+        "book_id": "16",
+        "title": "The Hound of the Baskervilles",
+        "author": "Arthur Conan Doyle",
+        "language": "English",
+        "year": "1901",
+        "genre": "Detective"
+    },
+    {
+        "book_id": "17",
+        "title": "Three Comrades",
+        "author": "Erich Maria Remarques",
+        "language": "German",
+        "year": "1936",
+        "genre": "Drama"
+    }
+]
