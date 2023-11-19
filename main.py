@@ -16,6 +16,7 @@ class Book:
     def __str__(self):
         return(f"\"{self.title}\", {self.author}")
     
+# gets information from the history of all loans and returns
     def get_available_info(self, library):
         for record in library.history:            
             if record["book"] == self.book_id and "return_time" not in record.keys():
@@ -33,6 +34,7 @@ class Customer:
     def __str__(self):
         return(f"{self.first_name} {self.last_name}")
     
+# gets information about books currently borrowed by the сustomer from the history of all loans and returns
     def get_loaned_books(self, library):
         for record in library.history:
             if record["customer"] == self.customer_id:
@@ -41,11 +43,13 @@ class Customer:
                         self.loaned_books.append(book)
                         self.loan_time.append(record["loan_time"])
 
+# gets information about orders of customer from the history of all orders
     def get_orders(self, library):
         for record in library.orders:
             if record["customer"] == self.customer_id:
                 self.orders.append(record)
 
+# finds out if customer can borrow, return and order books
     def restrictions(self):
         action_restrictions = {"loan": False, "return": False, "order": False}
         if len(self.loaned_books) < 2:
@@ -56,6 +60,7 @@ class Customer:
             action_restrictions["order"] = True
         return action_restrictions
 
+# displays books currently borrowed by the сustomer with the time of borrowing
     def display_loaned_books(self, library):
         self.loaned_books = []
         self.loan_time = []
@@ -63,6 +68,7 @@ class Customer:
         for item in zip(self.loaned_books, self.loan_time):
          print(f"{item[0]} borrowed {item[1]}")
 
+# displays books currently ordered by the сustomer with the time of order
     def display_orders(self, library):
         self.orders = []
         self.get_orders(library)
@@ -83,6 +89,7 @@ class Library:
     def add_book(self, book):
         self.books.append(book)
 
+# reads all books of the library from file
     def add_books_from_file(self):
         books_file = open(self.books_file, "r")
         all_books = json.load(books_file)
@@ -95,6 +102,7 @@ class Library:
     def add_customers(self, customer):
         self.customers.append(customer)
 
+# adds customers from the file if library already has customers
     def add_customers_from_file(self, customers_file):
         try:
             customers_file = open("customers.json", "r")
@@ -106,6 +114,7 @@ class Library:
         except FileNotFoundError:
             pass
 
+# adds customers from keybord
     def add_customer_from_keyboard(self):
         first_name = self.user_input("Enter your first name: ")
         surname = self.user_input("Enter your last name: ")
@@ -117,16 +126,21 @@ class Library:
         self.add_customers(new_customer)
         print(f"New customer registration was successful\nId nuber of customer {new_customer} is {id}")
 
+# finds object customer if we know his id number
     def find_customer(self, customer_id):
         for customer in self.customers:
             if customer.customer_id == customer_id:
                 return customer
             
+# finds object book if we know its id number            
     def find_book(self, book_id):
         for book in self.customers:
             if book.book_id == book_id:
                 return book
             
+# finds out 3 most popular book from from the history of all loans and returns
+# and show them on display
+# there may be several identical books in the library
     def display_popular_books(self):
         popular_books = Counter(record["title"] for record in self.history)
         most_popular_books = popular_books.most_common(3)
@@ -137,7 +151,8 @@ class Library:
                     if item[0] == book.title:
                         print(book)
                         break
-                             
+
+# loads history of all loans and returns from the file if it already exists                            
     def load_history(self, history_file):
         try:
             history_file = open("history.json", "r")
@@ -148,6 +163,7 @@ class Library:
         except FileNotFoundError:
             pass
 
+# loads history of all orders from the file if it already exists  
     def load_orders(self, orders_file):
         try:
             orders_file = open("orders.json", "r")
@@ -158,6 +174,7 @@ class Library:
         except FileNotFoundError:
             pass
 
+# gets all information about loans, retuns, orders, availablty of the books, etc.
     def load_all_data(self):
         self.add_books_from_file()
         self.add_customers_from_file(customers_file="customers.json")
@@ -169,16 +186,19 @@ class Library:
             customer.get_loaned_books(self)
             customer.get_orders(self)
 
+# saves history of loans and returns to the file
     def save_history(self, history_file):
         history_file = open("history.json", "w")
         json.dump(self.history, history_file, indent=2)
         history_file.close()
 
+# saves history of orders to the file
     def save_orders(self, orders_file):
         orders_file = open("orders.json", "w")
         json.dump(self.orders, orders_file, indent=2)
         orders_file.close()
 
+# saves new customers to the file
     def save_customers_file(self, customers_file):
         customers_file = open("customers.json", "w")
         customers = []
@@ -187,31 +207,30 @@ class Library:
         json.dump(customers, customers_file, indent=2)
         customers_file.close()
 
+# saves all information about loans, returns, orders and customers to the files
     def save_all_data(self):
         self.save_history(history_file="history.json")
         self.save_orders(orders_file="orders.json")
         self.save_customers_file(customers_file="customers.json")
 
+# checks if we have a book in the library and if it is available for loan
+# there may be several identical books in the library
     def check_availability_by_title(self, book_title):
         result = "not in stock"
         for book in self.books:
-            # print("iteration book ", book)
             if book_title.lower() == book.title.lower():
-                # print("same title ", book)
                 result = "not available"
-                # print("result: ", result)
                 if book.is_available:
-                    # print("is available ", book)
                     result = book
                     break
-                    # print("result: ", result)
                 else:
                     continue
         return result
 
+# loans book for a customer if it is available
+# adds information about loan to history
     def loan_book(self, customer_id, book_title):
         current_customer = self.find_customer(customer_id)
-        
         if self.check_availability_by_title(book_title) == "not in stock":
             print(f"Sorry, \"{book_title}\" is out of stock. You can order it and we will add \"{book_title}\" to our library")
         elif self.check_availability_by_title(book_title) == "not available":
@@ -226,6 +245,8 @@ class Library:
             self.continue_customer_session(customer_id)
         self.continue_customer_session(customer_id)
     
+# checks if customer has borrowed the book and return it to the library 
+# adds information about return to history
     def return_book(self, customer_id, book_title):
         current_customer = self.find_customer(customer_id)
         for book in current_customer.loaned_books:
@@ -242,6 +263,8 @@ class Library:
         print(f"Sorry,\"{book_title}\" is wrong book title")
         self.continue_customer_session(customer_id)
 
+# takes the order from customer if a book is not in stock
+# saves the order to history of orders
     def order_book(self, customer_id, new_book_title, new_book_author):
         current_customer = self.find_customer(customer_id)
         for book in self.books:
@@ -255,6 +278,7 @@ class Library:
         print(f"\"{new_book_title}\" has been ordered. We will add it to our library soon")
         self.continue_customer_session(customer_id)
 
+# gives user oportunity to end his session in every moment
     def user_input(self, message):
         user_answer = input(message)
         exit_words = ["exit", "quit", "q", "x"]
@@ -262,7 +286,10 @@ class Library:
             print("Session ended. See you next time")
             self.new_customer_session()
         return user_answer
-    
+
+# starts a new customer session if customer already exist
+# gives user oportunity to register as a customer
+# saves all information if user quit the program
     def new_customer_session(self):
         customer_id = input("\nEnter your customer id number: ")
         if customer_id.lower() in ["exit", "quit", "q", "x"]:
@@ -284,6 +311,7 @@ class Library:
                 print("Unacceptable answer. Session ended")
             self.new_customer_session()
 
+# invites the customer to continue working with the program
     def continue_customer_session(self, customer_id):
         print("Do you want to continue?")
         user_answer = self.user_input("Type \"Y\" for continue, \"N\" for end session: ")
@@ -296,6 +324,11 @@ class Library:
             print("Unacceptable answer. Session ended")
             self.new_customer_session()
 
+# invites the customer to select an action
+# checks if this action is allowed to the customer
+# displays actions and their resuls
+# if customer choose action "borrow a book", displays most popular book
+# if customer choose action "info", displays his borrowed and ordered books
     def display_customer_action(self, customer_id):
         current_customer = self.find_customer(customer_id)
         print("Please, select an action")
@@ -341,6 +374,7 @@ class Library:
             print("Unacceptable action")
         self.continue_customer_session(customer_id)
 
+# runs the program
     def run(self):
         self.load_all_data()
         while True:
@@ -352,8 +386,3 @@ class Library:
 
 my_library = Library("BestBooks", "Haifa", "books.json")
 my_library.run()
-
-# my_library.load_all_data()
-# a = my_library.check_availability_by_title(input())
-# print(a)
-# my_library.save_all_data()
