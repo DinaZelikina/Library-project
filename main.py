@@ -140,7 +140,7 @@ class Library:
             
 # finds out 3 most popular book from from the history of all loans and returns
 # and show them on display
-# there may be several identical books in the library
+# there may be several identical books in the library with different id numbers
     def display_popular_books(self):
         popular_books = Counter(record["title"] for record in self.history)
         most_popular_books = popular_books.most_common(3)
@@ -214,7 +214,7 @@ class Library:
         self.save_customers_file(customers_file="customers.json")
 
 # checks if we have a book in the library and if it is available for loan
-# there may be several identical books in the library
+# there may be several identical books in the library with different id numbers
     def check_availability_by_title(self, book_title):
         result = "not in stock"
         for book in self.books:
