@@ -325,7 +325,7 @@ class Library:
 # starts a new customer session if customer already exist
 # gives user oportunity to register as a customer
 # saves all information if user quit the program
-# reminds customer id number if customer choose "forgot"
+# reminds customer id if customer chooses "forgot"
     def new_customer_session(self):
         customer_id = input("\nEnter your customer id number (Type \"F\" if you forgot your customer id): ")
         if customer_id.lower() in ["exit", "quit", "q", "x"]:
