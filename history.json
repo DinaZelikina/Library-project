@@ -1,34 +1,80 @@
-[
-  {
+{
+  "2_1": {
     "customer": "2",
     "book": "3",
     "title": "It",
     "loan_time": "18.11.2023 23:40",
     "return_time": "19.11.2023 00:56"
   },
-  {
+  "3_1": {
     "customer": "3",
     "book": "11",
     "title": "Alice in Wonderland",
     "loan_time": "19.11.2023 00:15",
     "return_time": "19.11.2023 00:50"
   },
-  {
+  "3_2": {
     "customer": "3",
     "book": "4",
     "title": "It",
-    "loan_time": "19.11.2023 00:48"
+    "loan_time": "19.11.2023 00:48",
+    "return_time": "21.11.2023 13:19"
   },
-  {
+  "3_3": {
     "customer": "3",
     "book": "1",
     "title": "1984",
     "loan_time": "19.11.2023 00:50"
   },
-  {
+  "1_1": {
     "customer": "1",
     "book": "7",
     "title": "Harry Potter",
-    "loan_time": "19.11.2023 00:55"
+    "loan_time": "19.11.2023 00:55",
+    "return_time": "22.11.2023 13:20"
+  },
+  "1_2": {
+    "customer": "1",
+    "book": "9",
+    "title": "Fiesta",
+    "loan_time": "19.11.2023 21:15",
+    "return_time": "19.11.2023 21:15"
+  },
+  "1_3": {
+    "customer": "1",
+    "book": "2",
+    "title": "1984",
+    "loan_time": "20.11.2023 14:57",
+    "return_time": "21.11.2023 13:17"
+  },
+  "2_2": {
+    "customer": "2",
+    "book": "9",
+    "title": "Fiesta",
+    "loan_time": "20.11.2023 15:14"
+  },
+  "2_3": {
+    "customer": "2",
+    "book": "3",
+    "title": "It",
+    "loan_time": "21.11.2023 00:07"
+  },
+  "4_1": {
+    "customer": "4",
+    "book": "10",
+    "title": "Dumb Witness",
+    "loan_time": "21.11.2023 13:18"
+  },
+  "3_4": {
+    "customer": "3",
+    "book": "16",
+    "title": "The Hound of the Baskervilles",
+    "loan_time": "21.11.2023 13:19"
+  },
+  "1_4": {
+    "customer": "1",
+    "book": "6",
+    "title": "Carrie",
+    "loan_time": "22.11.2023 13:19"
   }
-]
+}
