@@ -227,7 +227,7 @@ class Library:
         customers_file = open("customers.json", "w")
         customers = []
         for customer in self.customers:
-            customers.append({"customer_id": customer.customer_id, "first_name": customer.first_name, "last_name": customer.last_name})
+            customers.append({"customer_id": customer.customer_id, "first_name": customer.first_name, "last_name": customer.last_name, "phone_number": customer.phone_number})
         json.dump(customers, customers_file, indent=2)
         customers_file.close()
 
