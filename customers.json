@@ -2,21 +2,25 @@
   {
     "customer_id": "1",
     "first_name": "Julia",
-    "last_name": "Roberts"
+    "last_name": "Roberts",
+    "phone_number": "0112233444"
   },
   {
     "customer_id": "2",
     "first_name": "Brad",
-    "last_name": "Pitt"
+    "last_name": "Pitt",
+    "phone_number": "0223344555"
   },
   {
     "customer_id": "3",
     "first_name": "Tom",
-    "last_name": "Cruise"
+    "last_name": "Cruise",
+    "phone_number": "0334455666"
   },
   {
     "customer_id": "4",
     "first_name": "Jennifer",
-    "last_name": "Aniston"
+    "last_name": "Aniston",
+    "phone_number": "0445566777"
   }
 ]
