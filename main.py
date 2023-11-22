@@ -15,17 +15,17 @@ class Book:
     
     def __str__(self):
         return(f"\"{self.title}\", {self.author}")
-    
 # gets information from the history of all loans and returns
     def get_available_info(self, library):
-        for record in library.history:            
+        for record in library.history.values():        
             if record["book"] == self.book_id and "return_time" not in record.keys():
                 self.is_available = False
 
 class Customer:
-    def __init__(self, customer_id, first_name, last_name):
+    def __init__(self, customer_id, first_name, last_name, phone_number):
         self.first_name = first_name
         self.last_name = last_name
+        self.phone_number = phone_number
         self.customer_id = customer_id
         self.loaned_books = []
         self.loan_time = []
@@ -33,21 +33,21 @@ class Customer:
 
     def __str__(self):
         return(f"{self.first_name} {self.last_name}")
-    
+
 # gets information about books currently borrowed by the сustomer from the history of all loans and returns
     def get_loaned_books(self, library):
-        for record in library.history:
-            if record["customer"] == self.customer_id:
+        for key, value in library.history.items():
+            if key.split("_")[0] == self.customer_id:
                 for book in library.books:
-                    if record["book"] == book.book_id and "return_time" not in record.keys():
+                    if value["book"] == book.book_id and "return_time" not in value.keys():
                         self.loaned_books.append(book)
-                        self.loan_time.append(record["loan_time"])
+                        self.loan_time.append(value["loan_time"])
 
 # gets information about orders of customer from the history of all orders
     def get_orders(self, library):
-        for record in library.orders:
-            if record["customer"] == self.customer_id:
-                self.orders.append(record)
+        for key, value in library.orders.items():
+            if key.split("_")[0] == self.customer_id:
+                self.orders.append(value)
 
 # finds out if customer can borrow, return and order books
     def restrictions(self):
@@ -76,28 +76,30 @@ class Customer:
          print(f"\"{order['new_book_title']}\", {order['new_book_author']} ordered {order['order_time']}")
 
 class Library:
-    def __init__(self, name, address, books_file):
+    def __init__(self, name, address):
         self.name = name
         self.address = address
-        self.books_file = books_file
         self.books = []
         self.customers = []
         self.employers = []
-        self.history = []
-        self.orders = []
+        self.history = {}
+        self.orders = {}
 
     def add_book(self, book):
         self.books.append(book)
 
 # reads all books of the library from file
     def add_books_from_file(self):
-        books_file = open(self.books_file, "r")
-        all_books = json.load(books_file)
-        books_file.close()
-        for book_dict in all_books:
-            book = Book(book_dict["title"], book_dict["author"], book_dict["language"], book_dict["year"], book_dict["genre"])
-            book.book_id = book_dict["book_id"]
-            self.add_book(book)
+        try:
+            books_file = open("books.json", "r")
+            all_books = json.load(books_file)
+            books_file.close()
+            for book_dict in all_books:
+                book = Book(book_dict["title"], book_dict["author"], book_dict["language"], book_dict["year"], book_dict["genre"])
+                book.book_id = book_dict["book_id"]
+                self.add_book(book)
+        except FileNotFoundError:
+            pass
 
     def add_customers(self, customer):
         self.customers.append(customer)
@@ -109,40 +111,64 @@ class Library:
             all_customers = json.load(customers_file)
             customers_file.close()
             for customer_dict in all_customers:
-                customer = Customer(customer_dict["customer_id"], customer_dict["first_name"], customer_dict["last_name"])
+                customer = Customer(customer_dict["customer_id"], customer_dict["first_name"], customer_dict["last_name"], customer_dict["phone_number"])
                 self.add_customers(customer)
         except FileNotFoundError:
             pass
 
 # adds customers from keybord
-    def add_customer_from_keyboard(self):
+# registers a new customer or reminds to the customer his id number if it already exists
+    def add_customer_from_keyboard(self, action):
         first_name = self.user_input("Enter your first name: ")
-        surname = self.user_input("Enter your last name: ")
-        try:
-            id = int(self.customers[-1].customer_id) + 1
-        except IndexError:
-            id = 1
-        new_customer = Customer(str(id), first_name, surname) 
-        self.add_customers(new_customer)
-        print(f"New customer registration was successful\nId nuber of customer {new_customer} is {id}")
+        last_name = self.user_input("Enter your last name: ")
+        phone_number = self.user_input("Enter your phone number without spaces or separators: ")
+        if not phone_number.isnumeric():
+            print("Invalid phone number format. Try again")
+            phone_number = self.user_input("Enter your phone number without spaces or separators: ")
+            if not phone_number.isnumeric():
+                print("Invalid phone number format. Session ended")
+                return
+        for customer in self.customers:
+            if customer.first_name == first_name.capitalize() and customer.last_name == last_name.capitalize() and customer.phone_number == phone_number:
+                print(f"We have a registered customer with this data. Customer id is {customer.customer_id}")
+                return
+        if action == "forgot_id":
+            print("Customer not found")
+            print(f"Do you want to register at the library \"{self.name}\"?")
+            user_answer = self.user_input("Type \"Y\" for register, \"N\" for exit: ")
+            if user_answer.lower() in ["y", "yes"]:
+                action = "registration"
+            elif user_answer.lower() in ["n", "no"]:
+                print("Session ended")                
+            else:
+                print("Unacceptable answer. Session ended")
+        if action == "registration":
+            try:
+                id = int(self.customers[-1].customer_id) + 1
+            except IndexError:
+                id = 1
+            new_customer = Customer(str(id), first_name.capitalize(), last_name.capitalize(), phone_number) 
+            self.add_customers(new_customer)
+            self.save_customers_file(customers_file="customers.json")
+            print(f"New customer registration was successful\nId nuber of customer {new_customer} is {id}")
 
 # finds object customer if we know his id number
     def find_customer(self, customer_id):
         for customer in self.customers:
             if customer.customer_id == customer_id:
                 return customer
-            
+
 # finds object book if we know its id number            
     def find_book(self, book_id):
-        for book in self.customers:
+        for book in self.books:
             if book.book_id == book_id:
                 return book
-            
+        
 # finds out 3 most popular book from from the history of all loans and returns
 # and show them on display
-# there may be several identical books in the library with different id numbers
+# there may be several identical books in the library
     def display_popular_books(self):
-        popular_books = Counter(record["title"] for record in self.history)
+        popular_books = Counter(record["title"] for record in self.history.values())
         most_popular_books = popular_books.most_common(3)
         if most_popular_books:
             print("Most popular books in our library:")
@@ -158,8 +184,7 @@ class Library:
             history_file = open("history.json", "r")
             history = json.load(history_file)
             history_file.close()
-            for record in history:
-                self.history.append(record)
+            self.history.update(history)
         except FileNotFoundError:
             pass
 
@@ -169,8 +194,7 @@ class Library:
             orders_file = open("orders.json", "r")
             orders = json.load(orders_file)
             orders_file.close()
-            for record in orders:
-                self.orders.append(record)
+            self.orders.update(orders)
         except FileNotFoundError:
             pass
 
@@ -214,7 +238,7 @@ class Library:
         self.save_customers_file(customers_file="customers.json")
 
 # checks if we have a book in the library and if it is available for loan
-# there may be several identical books in the library with different id numbers
+# there may be several identical books in the library
     def check_availability_by_title(self, book_title):
         result = "not in stock"
         for book in self.books:
@@ -231,18 +255,24 @@ class Library:
 # adds information about loan to history
     def loan_book(self, customer_id, book_title):
         current_customer = self.find_customer(customer_id)
-        if self.check_availability_by_title(book_title) == "not in stock":
+        check = self.check_availability_by_title(book_title)
+        if check == "not in stock":
             print(f"Sorry, \"{book_title}\" is out of stock. You can order it and we will add \"{book_title}\" to our library")
-        elif self.check_availability_by_title(book_title) == "not available":
+        elif check == "not available":
             print(f"Sorry, \"{book_title}\" is not available now\nYou can borrow another book from our library")
         else:
             book = self.check_availability_by_title(book_title)
             book.is_available = False                
             current_customer.loaned_books.append(book)
             time = datetime.now().strftime("%d.%m.%Y %H:%M")
-            self.history.append({"customer": customer_id, "book": book.book_id, "title": book.title, "loan_time": time})
+            new_loan = {"customer": customer_id, "book": book.book_id, "title": book.title, "loan_time": time}
+            all_record_numbers = [record_id.split("_") for record_id in self.history.keys()]
+            new_record_number = (max((int(record_number[1]) for record_number in all_record_numbers if record_number[0] == customer_id), default=0)) + 1
+            new_record_id = f"{customer_id}_{new_record_number}"
+            self.history.update({new_record_id: new_loan})
+            self.save_history(history_file="history.json")
             print(f"\"{book.title}\" loaned to customer {current_customer}") 
-            self.continue_customer_session(customer_id)
+        
         self.continue_customer_session(customer_id)
     
 # checks if customer has borrowed the book and return it to the library 
@@ -254,7 +284,7 @@ class Library:
                 book.is_available = True
                 current_customer.loaned_books.remove(book)
                 time = datetime.now().strftime("%d.%m.%Y %H:%M")
-                for record in self.history:
+                for record in self.history.values():
                     if "return_time" not in record.keys() and record["book"] == book.book_id:
                         record["return_time"] = time
                         print(f"\"{book.title}\" returned to the library") 
@@ -273,9 +303,14 @@ class Library:
                 self.continue_customer_session(customer_id)
                 return
         time = datetime.now().strftime("%d.%m.%Y %H:%M")
-        self.orders.append({"customer": customer_id, "new_book_title": new_book_title, "new_book_author": new_book_author, "order_time": time})
+        new_book_data = {"customer": customer_id, "new_book_title": new_book_title, "new_book_author": new_book_author, "order_time": time}
+        all_orders_id = [order_id.split("_") for order_id in self.orders.keys()]
+        new_order_number = (max((int(order_number[1]) for order_number in all_orders_id if order_number[0] == customer_id), default=0)) + 1
+        new_order_id = f"{customer_id}_{new_order_number}"
+        self.orders.update({new_order_id: new_book_data})
+        self.save_orders(orders_file="orders.json")
         current_customer.orders.append({"new_book_title": new_book_title, "new_book_author": new_book_author, "order_time": time})
-        print(f"\"{new_book_title}\" has been ordered. We will add it to our library soon")
+        print(f"\"{new_book_title}\" has been ordered. We'll try to add it to our library soon")
         self.continue_customer_session(customer_id)
 
 # gives user oportunity to end his session in every moment
@@ -290,11 +325,15 @@ class Library:
 # starts a new customer session if customer already exist
 # gives user oportunity to register as a customer
 # saves all information if user quit the program
+# reminds customer id number if customer choose "forgot"
     def new_customer_session(self):
-        customer_id = input("\nEnter your customer id number: ")
+        customer_id = input("\nEnter your customer id number (Type \"F\" if you forgot your customer id): ")
         if customer_id.lower() in ["exit", "quit", "q", "x"]:
              self.save_all_data()
              exit()
+        elif customer_id.lower() in ["f", "forgot"]:
+            self.add_customer_from_keyboard("forgot_id")
+            self.new_customer_session()
         elif self.find_customer(customer_id):
             print(f"Hello {self.find_customer(customer_id)}! Welcome to the library \"{self.name}\"?")
             self.display_customer_action(customer_id)
@@ -302,10 +341,10 @@ class Library:
             print("Customer not found")
             print(f"Do you want to register at the library \"{self.name}\"?")
             user_answer = self.user_input("Type \"Y\" for register, \"N\" for exit: ")
-            if user_answer in ["y", "yes"]:
-                self.add_customer_from_keyboard()
+            if user_answer.lower() in ["y", "yes"]:
+                self.add_customer_from_keyboard("registration")
                 self.new_customer_session()
-            elif user_answer in ["n", "no"]:
+            elif user_answer.lower() in ["n", "no"]:
                 print("Session ended")                
             else:
                 print("Unacceptable answer. Session ended")
@@ -384,5 +423,5 @@ class Library:
                 self.save_all_data()
                 exit()
 
-my_library = Library("BestBooks", "Haifa", "books.json")
+my_library = Library("BestBooks", "Haifa")
 my_library.run()
